@@ -1,0 +1,24 @@
+import pygame
+
+
+SCREEN_WIDTH = 500
+SCREEN_HEIGHT = 800
+FPS = 60
+
+PLAYER_IMAGE = "assets/player1.png"
+PLAYER_SPEED = 10
+
+ENEMY_IMAGE = "assets/enemy1.png"
+ENEMY_SPEED = 3
+
+BULLET_IMAGE = "assets/bullet1.png"
+BULLET_SPEED = 12
+
+ADD_ENEMY_INTERVAL = 1200
+SHOOT_INTERVAL = 200
+ADD_ENEMY_EVENT = pygame.USEREVENT + 1
+SHOOT_EVENT = pygame.USEREVENT + 2
+
+PLAYING = "playing"
+BACKGROUND_COLOR = (20, 28, 44)
+

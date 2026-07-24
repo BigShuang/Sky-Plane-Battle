@@ -1,0 +1,12 @@
+import pygame
+
+
+SCREEN_WIDTH = 500
+SCREEN_HEIGHT = 800
+FPS = 60
+
+PLAYER_IMAGE = "assets/player1.png"
+PLAYER_SPEED = 10
+
+BACKGROUND_COLOR = (20, 28, 44)
+
