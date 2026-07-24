@@ -1,8 +1,7 @@
 import pygame
 
 from bullet import Bullet
-from settings import PLAYER_IMAGE, PLAYER_SPEED, SCREEN_HEIGHT, SCREEN_WIDTH
-
+from settings import PLAYER_IMAGE, PLAYER_OFFSET, PLAYER_SPEED, SCREEN_HEIGHT, SCREEN_WIDTH
 
 class Player:
     """玩家飞机"""
@@ -28,10 +27,11 @@ class Player:
             self.y += self.speed
 
     def stay_in_screen(self):
-        if self.x < 0:
-            self.x = 0
-        if self.x > SCREEN_WIDTH - self.rect.width:
-            self.x = SCREEN_WIDTH - self.rect.width
+        """限制飞机不能飞出屏幕"""
+        if self.x < -PLAYER_OFFSET:
+            self.x = -PLAYER_OFFSET
+        if self.x > SCREEN_WIDTH - self.rect.width + PLAYER_OFFSET:
+            self.x = SCREEN_WIDTH - self.rect.width + PLAYER_OFFSET
         if self.y < 0:
             self.y = 0
         if self.y > SCREEN_HEIGHT - self.rect.height:
