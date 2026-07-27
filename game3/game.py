@@ -21,11 +21,12 @@ def main():
     pygame.display.set_caption("Sky Plane Battle v1.3")
     clock = pygame.time.Clock()
     pygame.time.set_timer(ADD_ENEMY_EVENT, ADD_ENEMY_INTERVAL)
-    pygame.time.set_timer(SHOOT_EVENT, SHOOT_INTERVAL)
+    # TODO 3.2：按照配置的时间间隔注册自动射击事件。
 
     player = Player()
     enemies = []
-    bullets = []
+    # TODO 3.2：创建用于管理所有子弹的列表。
+    
     game_state = PLAYING
     running = True
 
@@ -33,42 +34,46 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            # 仅在 PLAYING 状态下响应敌机生成事件。
             if game_state == PLAYING and event.type == ADD_ENEMY_EVENT:
                 enemies.append(Enemy())
-            if game_state == PLAYING and event.type == SHOOT_EVENT:
-                bullets.append(player.shoot())
+
+            # TODO 3.2：仅在 PLAYING 状态下响应射击事件，
+            # 调用 player.shoot() 产生子弹对象，并将返回的子弹加入列表。
+            
 
         keys = pygame.key.get_pressed()
         player.update(keys)
 
         for enemy in enemies:
             enemy.update()
-        for bullet in bullets:
-            bullet.update()
+
+        # TODO 3.2：逐一更新所有子弹的位置。
 
         enemies = [enemy for enemy in enemies if not enemy.is_out_of_screen()]
-        bullets = [bullet for bullet in bullets if not bullet.is_out_of_screen()]
 
-        hit_enemies = []
-        hit_bullets = []
-        for bullet in bullets:
-            for enemy in enemies:
-                if bullet.rect.colliderect(enemy.rect):
-                    hit_bullets.append(bullet)
-                    hit_enemies.append(enemy)
-                    break
+        # TODO 3.2：过滤子弹列表，清理已经完全飞出屏幕上方的子弹。
 
-        bullets = [bullet for bullet in bullets if bullet not in hit_bullets]
-        enemies = [enemy for enemy in enemies if enemy not in hit_enemies]
+        # TODO 3.3：使用矩形碰撞检测子弹与敌机，记录命中的子弹和敌机
+        # hit_enemies = []
+        # hit_bullets = []
+        # for bullet in bullets:
+        #     for enemy in enemies:
+                # 检查 bullet 的矩形对象 碰撞到了 enemy 的矩形对象
+                # 如果碰撞到了，就记录到对应的列表中，并停止检测该子弹。
+
+
+        # TODO 3.3：统一过滤列表，使命中的子弹和敌机消失。
 
         screen.fill(BACKGROUND_COLOR)
         for enemy in enemies:
             enemy.draw(screen)
-        for bullet in bullets:
-            bullet.draw(screen)
+
+        # TODO 3.2：逐一绘制子弹列表中的所有子弹。
+
+
         player.draw(screen)
         pygame.display.update()
         clock.tick(FPS)
 
     pygame.quit()
-

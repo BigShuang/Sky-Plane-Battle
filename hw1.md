@@ -195,20 +195,33 @@ print(arr3)   # [1, 36, 49, 25]
 
 
 ### 三、v1.3：自动射击与战斗循环
+在上一层基础上加入自动射击、子弹与敌机碰撞、对象消失，形成完整的核心战斗循环。
 
-在第一层基础上加入自动射击、子弹与敌机碰撞、对象消失和计分，形成完整的核心战斗循环。
+本部分需要拓展学习**rect的细节知识**, 具体看
+[https://pygame.readthedocs.io/en/latest/rect/rect.html#](https://pygame.readthedocs.io/en/latest/rect/rect.html#)
+- Virtual attributes
+- Points of interest
+- Colliding points
+- Colliding rectangles
+
+补充图解如下
+
+<div align="center">
+    <img src="./images/301.png" width="80%">
+</div>
 
 #### 3.1 实现子弹创建与发射
 
-涉及文件：`bullet.py`、`player.py`
+涉及文件：`settings.py`、`bullet.py`、`player.py`
 
 需要完成：
 
-1. 创建子弹时，将子弹图片的底部中点放在玩家飞机的顶部中点。
-2. 保存子弹的位置和速度。
-3. 在 `Bullet.update()` 中让子弹向屏幕上方移动并同步 `rect`。
-4. 在 `Bullet.is_out_of_screen()` 中判断子弹是否已经完全离开屏幕上方。
-5. 在 `Player.shoot()` 中创建并返回一个 `Bullet` 对象。
+1. 在配置文件中设置子弹图片路径和合适的飞行速度。
+2. 创建子弹时，将子弹图片的底部中点放在玩家飞机的顶部中点。
+3. 保存子弹的位置和速度。
+4. 在 `Bullet.update()` 中让子弹向屏幕上方移动并同步 `rect`。
+5. 在 `Bullet.is_out_of_screen()` 中判断子弹是否已经完全离开屏幕上方。
+6. 在 `Player.shoot()` 中创建并返回一个 `Bullet` 对象。
 
 提示：可使用 `rect.midbottom`、玩家的 `rect.centerx` 和 `rect.top` 对齐发射位置。
 

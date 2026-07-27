@@ -14,13 +14,12 @@ PLAYER_SPEED = 10
 ENEMY_IMAGE = "assets/enemy1.png"
 ENEMY_SPEED = 3
 
-BULLET_IMAGE = "assets/bullet1.png"
-BULLET_SPEED = 12
+# TODO 3.1：设置子弹图片路径和速度（10上下）
 
 ADD_ENEMY_INTERVAL = 1200
-SHOOT_INTERVAL = 200
+SHOOT_INTERVAL = 200  # 子弹射击间隔
 ADD_ENEMY_EVENT = pygame.USEREVENT + 1
-SHOOT_EVENT = pygame.USEREVENT + 2
+SHOOT_EVENT = pygame.USEREVENT + 2  # 子弹射击事件
 
 PLAYING = "playing"
 BACKGROUND_COLOR = (20, 28, 44)

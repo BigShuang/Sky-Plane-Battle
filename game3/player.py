@@ -48,5 +48,5 @@ class Player:
 
     def shoot(self):
         """从飞机顶部中间发射子弹"""
-        return Bullet(self.rect.centerx, self.rect.top)
-
+        # TODO 3.1：根据玩家飞机的顶部中点创建并返回一个 Bullet 对象。
+        pass
