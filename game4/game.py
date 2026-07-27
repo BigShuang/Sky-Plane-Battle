@@ -8,14 +8,14 @@ from settings import (
     BACKGROUND_COLOR,
     CURRENT_LANGUAGE,
     FPS,
-    GAME_OVER,
     LIGHT_GRAY,
-    PLAYING,
     SCREEN_HEIGHT,
     SCREEN_WIDTH,
     SHOOT_EVENT,
     SHOOT_INTERVAL,
-    START,
+    STATUS_GAME_OVER,
+    STATUS_PLAYING,
+    STATUS_START,
     WHITE,
     YELLOW,
     get_text,
@@ -75,7 +75,7 @@ def is_mask_collision(sprite1, sprite2):
 def main():
     # 2. 游戏状态
     player, enemies, bullets, score = reset_game()
-    game_state = START
+    game_state = STATUS_START
 
     running = True
     while running:
@@ -84,15 +84,15 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
-                if game_state == START or game_state == GAME_OVER:
+                if game_state == STATUS_START or game_state == STATUS_GAME_OVER:
                     player, enemies, bullets, score = reset_game()
-                    game_state = PLAYING
-            if game_state == PLAYING and event.type == ADD_ENEMY_EVENT:
+                    game_state = STATUS_PLAYING
+            if game_state == STATUS_PLAYING and event.type == ADD_ENEMY_EVENT:
                 enemies.append(Enemy())
-            if game_state == PLAYING and event.type == SHOOT_EVENT:
+            if game_state == STATUS_PLAYING and event.type == SHOOT_EVENT:
                 bullets.append(player.shoot())
 
-        if game_state == START:
+        if game_state == STATUS_START:
             draw_game_screen(player, enemies, bullets, score)
             draw_text(get_text(CURRENT_LANGUAGE, "title"), title_font, WHITE, (SCREEN_WIDTH / 2, 300))
             draw_text(
@@ -105,7 +105,7 @@ def main():
             clock.tick(FPS)
             continue
 
-        if game_state == GAME_OVER:
+        if game_state == STATUS_GAME_OVER:
             draw_game_screen(player, enemies, bullets, score)
             draw_text(get_text(CURRENT_LANGUAGE, "game_over"), title_font, WHITE, (SCREEN_WIDTH / 2, 280))
             draw_text(
@@ -150,7 +150,7 @@ def main():
         # 6. 检查玩家是否撞到敌人
         for enemy in enemies:
             if is_mask_collision(player, enemy):
-                game_state = GAME_OVER
+                game_state = STATUS_GAME_OVER
                 break
 
         # 7. 绘制画面
