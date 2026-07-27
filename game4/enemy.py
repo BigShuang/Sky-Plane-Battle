@@ -12,7 +12,8 @@ class Enemy:
         # 加载敌人图片
         self.image = pygame.image.load(str(ENEMY_IMAGE)).convert_alpha()
         self.rect = self.image.get_rect()
-        self.mask = pygame.mask.from_surface(self.image)
+        # TODO 4.2：根据带透明通道的敌机图片创建像素碰撞遮罩 mask。
+        # self.mask = pygame.mask.from_surface(self.image)
 
         # 敌人从屏幕顶部随机位置出现
         self.x = random.randint(0, SCREEN_WIDTH - self.rect.width)
