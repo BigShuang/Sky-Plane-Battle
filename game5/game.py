@@ -5,7 +5,7 @@ from player import Player
 from settings import (
     ADD_ENEMY_EVENT,
     ADD_ENEMY_INTERVAL,
-    BACKGROUND_COLOR,
+    BACKGROUND_IMAGE,
     CURRENT_LANGUAGE,
     FPS,
     LIGHT_GRAY,
@@ -23,6 +23,7 @@ from settings import (
 
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+background_image = pygame.image.load(BACKGROUND_IMAGE).convert()
 clock = pygame.time.Clock()
 title_font = pygame.font.SysFont("Microsoft YaHei", 56)
 normal_font = pygame.font.SysFont("Microsoft YaHei", 28)
@@ -46,7 +47,7 @@ def draw_text_topright(text, font, color):
 
 def draw_game_screen(player, enemies, bullets, score):
     """绘制游戏画面"""
-    screen.fill(BACKGROUND_COLOR)
+    screen.blit(background_image, (0, 0))
     for enemy in enemies:
         enemy.draw(screen)
     for bullet in bullets:
@@ -97,7 +98,7 @@ def main():
 
         if game_state == STATUS_START:
             draw_game_screen(player, enemies, bullets, score)
-            title_text = get_text(CURRENT_LANGUAGE, "start_title")
+            title_text = get_text(CURRENT_LANGUAGE, "title")
             prompt_text = get_text(CURRENT_LANGUAGE, "start_prompt")
             draw_text(title_text, title_font, WHITE, (SCREEN_WIDTH / 2, 300))
             draw_text(prompt_text, normal_font, LIGHT_GRAY, (SCREEN_WIDTH / 2, 390))
