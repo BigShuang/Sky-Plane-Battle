@@ -85,9 +85,10 @@ def main():
 
     running = True
     while running:
-        background_y += BACKGROUND_SPEED
-        if background_y >= background_image.get_height():
-            background_y = 0
+        if game_state != STATUS_GAME_OVER:
+            background_y += BACKGROUND_SPEED
+            if background_y >= background_image.get_height():
+                background_y = 0
 
         # 3. 处理退出事件
         for event in pygame.event.get():
