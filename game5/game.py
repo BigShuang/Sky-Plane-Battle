@@ -37,10 +37,10 @@ def draw_text(text, font, color, center):
     screen.blit(text_image, text_rect)
 
 
-def draw_text_topright(text, font, color, topright):
+def draw_text_topright(text, font, color):
     """在指定右上角位置绘制文字"""
     text_image = font.render(text, True, color)
-    text_rect = text_image.get_rect(topright=topright)
+    text_rect = text_image.get_rect(topright=(SCREEN_WIDTH - 20, 15))
     screen.blit(text_image, text_rect)
 
 
@@ -52,11 +52,11 @@ def draw_game_screen(player, enemies, bullets, score):
     for bullet in bullets:
         bullet.draw(screen)
     player.draw(screen)
+    score_text = get_text(CURRENT_LANGUAGE, "score", score=score)
     draw_text_topright(
-        get_text(CURRENT_LANGUAGE, "score", score=score),
+        score_text,
         normal_font,
-        WHITE,
-        (SCREEN_WIDTH - 20, 15),
+        WHITE
     )
 
 
@@ -66,14 +66,14 @@ def reset_game():
 
 
 def is_mask_collision(sprite1, sprite2):
-    """判断两张图片的非透明部分是否碰撞"""
+    """精细碰撞判定： 判断两张图片的非透明部分是否碰撞"""
     offset_x = sprite2.rect.x - sprite1.rect.x
     offset_y = sprite2.rect.y - sprite1.rect.y
     return sprite1.mask.overlap(sprite2.mask, (offset_x, offset_y)) is not None
 
 
 def main():
-    # 2. 游戏状态
+    # 调用 reset_game() 创建首局数据，并将初始状态设为 STATUS_START。
     player, enemies, bullets, score = reset_game()
     game_state = STATUS_START
 
@@ -81,8 +81,11 @@ def main():
     while running:
         # 3. 处理退出事件
         for event in pygame.event.get():
+            # 收到退出事件时结束主循环。
             if event.type == pygame.QUIT:
                 running = False
+
+            # 重置游戏数据并进入 STATUS_PLAYING。
             if event.type == pygame.KEYDOWN:
                 if game_state == STATUS_START or game_state == STATUS_GAME_OVER:
                     player, enemies, bullets, score = reset_game()
@@ -94,32 +97,24 @@ def main():
 
         if game_state == STATUS_START:
             draw_game_screen(player, enemies, bullets, score)
-            draw_text(get_text(CURRENT_LANGUAGE, "title"), title_font, WHITE, (SCREEN_WIDTH / 2, 300))
-            draw_text(
-                get_text(CURRENT_LANGUAGE, "start_prompt"),
-                normal_font,
-                LIGHT_GRAY,
-                (SCREEN_WIDTH / 2, 390),
-            )
+            title_text = get_text(CURRENT_LANGUAGE, "start_title")
+            prompt_text = get_text(CURRENT_LANGUAGE, "start_prompt")
+            draw_text(title_text, title_font, WHITE, (SCREEN_WIDTH / 2, 300))
+            draw_text(prompt_text, normal_font, LIGHT_GRAY, (SCREEN_WIDTH / 2, 390))
             pygame.display.update()
             clock.tick(FPS)
-            continue
+            continue  # 使用 continue 跳过后续战斗逻辑。
 
+        # TODO 4.3：处理并绘制结束时的画面（即游戏状态为结束），显示游戏结束、最终得分和重新开始提示；
+        # 刷新画面、限制帧率，并使用 continue 跳过战斗逻辑。
         if game_state == STATUS_GAME_OVER:
             draw_game_screen(player, enemies, bullets, score)
-            draw_text(get_text(CURRENT_LANGUAGE, "game_over"), title_font, WHITE, (SCREEN_WIDTH / 2, 280))
-            draw_text(
-                get_text(CURRENT_LANGUAGE, "final_score", score=score),
-                normal_font,
-                YELLOW,
-                (SCREEN_WIDTH / 2, 370),
-            )
-            draw_text(
-                get_text(CURRENT_LANGUAGE, "restart_prompt"),
-                normal_font,
-                LIGHT_GRAY,
-                (SCREEN_WIDTH / 2, 440),
-            )
+            game_over_text = get_text(CURRENT_LANGUAGE, "game_over")
+            final_score_text = get_text(CURRENT_LANGUAGE, "final_score", score=score)
+            restart_text = get_text(CURRENT_LANGUAGE, "restart_prompt")
+            draw_text(game_over_text, title_font, WHITE, (SCREEN_WIDTH / 2, 300))
+            draw_text(final_score_text, normal_font, LIGHT_GRAY, (SCREEN_WIDTH / 2, 390))
+            draw_text(restart_text, normal_font, YELLOW, (SCREEN_WIDTH / 2, 450))
             pygame.display.update()
             clock.tick(FPS)
             continue

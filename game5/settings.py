@@ -33,7 +33,7 @@ WHITE = (255, 255, 255)
 LIGHT_GRAY = (220, 220, 220)
 YELLOW = (255, 220, 120)
 
-# 文字语言设置
+# 集中配置中英文界面文本，并设置当前使用的语言。
 ZH = "zh"
 EN = "en"
 # 在这里设置游戏显示语言：中文用 ZH，英文用 EN
@@ -63,4 +63,5 @@ TEXTS = {
 
 def get_text(current_language, key, **kwargs):
     """根据当前语言获取文字"""
+    # 获取当前语言对应的文字，并填充 score 等占位符。
     return TEXTS[current_language][key].format(**kwargs)
