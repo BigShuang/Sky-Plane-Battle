@@ -6,6 +6,7 @@ from settings import (
     ADD_ENEMY_EVENT,
     ADD_ENEMY_INTERVAL,
     BACKGROUND_IMAGE,
+    BACKGROUND_SPEED,
     CURRENT_LANGUAGE,
     FPS,
     LIGHT_GRAY,
@@ -24,6 +25,7 @@ from settings import (
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 background_image = pygame.image.load(BACKGROUND_IMAGE).convert()
+background_y = 0
 clock = pygame.time.Clock()
 title_font = pygame.font.SysFont("Microsoft YaHei", 56)
 normal_font = pygame.font.SysFont("Microsoft YaHei", 28)
@@ -47,7 +49,9 @@ def draw_text_topright(text, font, color):
 
 def draw_game_screen(player, enemies, bullets, score):
     """绘制游戏画面"""
-    screen.blit(background_image, (0, 0))
+    height = background_image.get_height()
+    screen.blit(background_image, (0, background_y))
+    screen.blit(background_image, (0, background_y - height))
     for enemy in enemies:
         enemy.draw(screen)
     for bullet in bullets:
@@ -74,12 +78,17 @@ def is_mask_collision(sprite1, sprite2):
 
 
 def main():
+    global background_y
     # 调用 reset_game() 创建首局数据，并将初始状态设为 STATUS_START。
     player, enemies, bullets, score = reset_game()
     game_state = STATUS_START
 
     running = True
     while running:
+        background_y += BACKGROUND_SPEED
+        if background_y >= background_image.get_height():
+            background_y = 0
+
         # 3. 处理退出事件
         for event in pygame.event.get():
             # 收到退出事件时结束主循环。
