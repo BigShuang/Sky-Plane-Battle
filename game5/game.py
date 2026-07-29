@@ -8,12 +8,20 @@ from settings import (
     BACKGROUND_IMAGE,
     BACKGROUND_SPEED,
     CURRENT_LANGUAGE,
+    ENEMY_EXPLOSION_SOUND,
+    ENEMY_EXPLOSION_VOLUME,
     FPS,
+    GAME_MUSIC,
+    GAME_MUSIC_VOLUME,
     LIGHT_GRAY,
+    PLAYER_EXPLOSION_SOUND,
+    PLAYER_EXPLOSION_VOLUME,
     SCREEN_HEIGHT,
     SCREEN_WIDTH,
     SHOOT_EVENT,
     SHOOT_INTERVAL,
+    START_MUSIC,
+    START_MUSIC_VOLUME,
     STATUS_GAME_OVER,
     STATUS_PLAYING,
     STATUS_START,
@@ -32,6 +40,19 @@ normal_font = pygame.font.SysFont("Microsoft YaHei", 28)
 pygame.display.set_caption(get_text(CURRENT_LANGUAGE, "caption"))
 pygame.time.set_timer(ADD_ENEMY_EVENT, ADD_ENEMY_INTERVAL)
 pygame.time.set_timer(SHOOT_EVENT, SHOOT_INTERVAL)
+
+enemy_explosion_sound = pygame.mixer.Sound(ENEMY_EXPLOSION_SOUND)
+player_explosion_sound = pygame.mixer.Sound(PLAYER_EXPLOSION_SOUND)
+enemy_explosion_sound.set_volume(ENEMY_EXPLOSION_VOLUME)
+player_explosion_sound.set_volume(PLAYER_EXPLOSION_VOLUME)
+
+
+def play_music(filename, volume):
+    """循环播放背景音乐"""
+    pygame.mixer.music.load(filename)
+    pygame.mixer.music.set_volume(volume)
+    pygame.mixer.music.play(-1)
+
 
 def draw_text(text, font, color, center):
     """在指定中心位置绘制文字"""
@@ -82,6 +103,7 @@ def main():
     # 调用 reset_game() 创建首局数据，并将初始状态设为 STATUS_START。
     player, enemies, bullets, score = reset_game()
     game_state = STATUS_START
+    play_music(START_MUSIC, START_MUSIC_VOLUME)
 
     running = True
     while running:
@@ -99,6 +121,7 @@ def main():
             # 重置游戏数据并进入 STATUS_PLAYING。
             if event.type == pygame.KEYDOWN:
                 if game_state == STATUS_START or game_state == STATUS_GAME_OVER:
+                    play_music(GAME_MUSIC, GAME_MUSIC_VOLUME)
                     player, enemies, bullets, score = reset_game()
                     game_state = STATUS_PLAYING
             if game_state == STATUS_PLAYING and event.type == ADD_ENEMY_EVENT:
@@ -145,10 +168,13 @@ def main():
         hit_bullets = []
         for bullet in bullets:
             for enemy in enemies:
+                if enemy in hit_enemies:
+                    continue
                 if bullet.rect.colliderect(enemy.rect):
                     hit_bullets.append(bullet)
                     hit_enemies.append(enemy)
                     score += 10
+                    enemy_explosion_sound.play()
                     break
         bullets = [bullet for bullet in bullets if bullet not in hit_bullets]
         enemies = [enemy for enemy in enemies if enemy not in hit_enemies]
@@ -156,6 +182,8 @@ def main():
         # 6. 检查玩家是否撞到敌人
         for enemy in enemies:
             if is_mask_collision(player, enemy):
+                player_explosion_sound.play()
+                pygame.mixer.music.stop()
                 game_state = STATUS_GAME_OVER
                 break
 

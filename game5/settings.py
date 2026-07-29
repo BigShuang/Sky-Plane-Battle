@@ -23,6 +23,15 @@ ADD_ENEMY_INTERVAL = 1200
 ADD_ENEMY_EVENT = pygame.USEREVENT + 1
 SHOOT_EVENT = pygame.USEREVENT + 2
 
+START_MUSIC = "assets/audio/space_adventure_clip.ogg"
+GAME_MUSIC = "assets/audio/through_space_clip.ogg"
+ENEMY_EXPLOSION_SOUND = "assets/audio/boom-and-rattle.wav"
+PLAYER_EXPLOSION_SOUND = "assets/audio/explosion.wav"
+START_MUSIC_VOLUME = 0.14
+GAME_MUSIC_VOLUME = 0.25
+ENEMY_EXPLOSION_VOLUME = 0.25
+PLAYER_EXPLOSION_VOLUME = 0.20
+
 # 定义开始、游戏中和游戏结束三种状态常量，状态值依次为 0、1、2。
 STATUS_START = 0
 STATUS_PLAYING = 1
