@@ -34,8 +34,12 @@ from settings import (
 
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-background_image = pygame.image.load(BACKGROUND_IMAGE).convert()
-explosion_images = [pygame.image.load(path).convert_alpha() for path in EXPLOSION_IMAGES]
+# TODO 5.1：在主循环开始前加载背景图片，并使用 convert() 转换图片格式。
+# background_image = pygame.image.load(?).convert()
+
+# TODO 5.4：在主循环开始前加载全部爆炸图片，使用 convert_alpha() 保留透明通道，并按配置列表中的顺序保存这些序列帧。
+# explosion_images = [pygame.image.load(?).convert_alpha() for ? in ?]
+
 background_y = 0
 clock = pygame.time.Clock()
 title_font = pygame.font.SysFont("Microsoft YaHei", 56)
@@ -44,17 +48,22 @@ pygame.display.set_caption(get_text(CURRENT_LANGUAGE, "caption"))
 pygame.time.set_timer(ADD_ENEMY_EVENT, ADD_ENEMY_INTERVAL)
 pygame.time.set_timer(SHOOT_EVENT, SHOOT_INTERVAL)
 
-enemy_explosion_sound = pygame.mixer.Sound(ENEMY_EXPLOSION_SOUND)
-player_explosion_sound = pygame.mixer.Sound(PLAYER_EXPLOSION_SOUND)
-enemy_explosion_sound.set_volume(ENEMY_EXPLOSION_VOLUME)
-player_explosion_sound.set_volume(PLAYER_EXPLOSION_VOLUME)
+# TODO 5.3：预先加载敌机爆炸和玩家坠毁音效，并分别设置配置中指定的音量。音效只能加载一次，不要在碰撞循环中重复读取文件。
+# 分别创建两个 Sound 对象，后续在对应碰撞发生时直接调用 play()。
+# enemy_explosion_sound = pygame.mixer.Sound(?)
+# player_explosion_sound = ?
+# enemy_explosion_sound.set_volume(?)
+
 
 
 def play_music(filename, volume):
     """循环播放背景音乐"""
-    pygame.mixer.music.load(filename)
-    pygame.mixer.music.set_volume(volume)
-    pygame.mixer.music.play(-1)
+    # TODO 5.3：根据 filename 参数加载背景音乐，根据 volume 参数设置音量，
+    # 然后让音乐无限循环播放。pygame.mixer.music 同一时间只播放一首背景音乐，
+    # 因此再次调用本函数时会自然切换到新的音乐。
+    # pygame.mixer.music.load(?)
+    # pygame.mixer.music.set_volume(?)
+    # pygame.mixer.music.play(-1)
 
 
 def draw_text(text, font, color, center):
@@ -73,17 +82,22 @@ def draw_text_topright(text, font, color):
 
 def draw_game_screen(player, enemies, bullets, explosions, score):
     """绘制游戏画面"""
-    height = background_image.get_height()
-    screen.blit(background_image, (0, background_y))
-    screen.blit(background_image, (0, background_y - height))
+    # TODO 5.2：在所有游戏对象之前绘制两张上下首尾相接的背景图片。
+    # 要求：分别绘制在 background_y 和 background_y - 背景高度的位置，形成连续滚动效果。
+    # 第一张图片向下移动露出空白时，第二张图片应刚好从上方补上，不能出现明显断层。
+    # height = background_image.get_height()
+    # screen.blit(background_image, (0, ?))
+    # screen.blit(background_image, (0, ?))
     for enemy in enemies:
         enemy.draw(screen)
     for bullet in bullets:
         bullet.draw(screen)
     player.draw(screen)
-    for explosion in explosions:
-        image = explosion_images[explosion["frame"]]
-        screen.blit(image, image.get_rect(center=explosion["center"]))
+    # TODO 5.4：绘制每个爆炸动画当前帧，并让图片中心对准敌机被击毁时的中心。爆炸绘制在游戏对象之后、得分文字之前。
+    # 可以先根据 frame 取得当前图片，再使用 get_rect(center=...) 计算居中的绘制区域。
+    # for explosion in explosions:
+    #     image = explosion_images[?]
+    #     screen.blit(image, image.get_rect(center=?))
     score_text = get_text(CURRENT_LANGUAGE, "score", score=score)
     draw_text_topright(
         score_text,
@@ -99,12 +113,16 @@ def reset_game():
 
 def update_explosions(explosions):
     """更新爆炸动画并移除已经播放完的动画"""
-    for explosion in explosions:
-        explosion["timer"] += 1
-        if explosion["timer"] >= EXPLOSION_FRAME_INTERVAL:
-            explosion["timer"] = 0
-            explosion["frame"] += 1
-    return [item for item in explosions if item["frame"] < len(explosion_images)]
+    # TODO 5.4：更新每个爆炸的计时器；达到切帧间隔后切换到下一张图片。
+    # 最后只返回尚未播放完的动画，避免无效对象不断累积。
+    # 每次切帧后应将计时器归零；当前帧编号达到图片总数时，说明动画已经播放完成。
+    # for explosion in explosions:
+    #     ?
+    #     if explosion["timer"] >= ?:
+    #         ?
+    #         ?
+    # return [item for item in explosions if item["frame"] < len(explosion_images)]
+    return explosions
 
 
 def is_mask_collision(sprite1, sprite2):
@@ -119,14 +137,19 @@ def main():
     # 调用 reset_game() 创建首局数据，并将初始状态设为 STATUS_START。
     player, enemies, bullets, explosions, score = reset_game()
     game_state = STATUS_START
-    play_music(START_MUSIC, START_MUSIC_VOLUME)
+    # TODO 5.3：进入开始界面时，调用上面的音乐播放函数，
+    # 传入开始音乐路径和对应音量，使开始界面音乐持续循环。
+    # play_music(?, ?)
 
     running = True
     while running:
-        if game_state != STATUS_GAME_OVER:
-            background_y += BACKGROUND_SPEED
-            if background_y >= background_image.get_height():
-                background_y = 0
+        # TODO 5.2：非结束状态下更新背景纵向偏移量；移动完整张图片的高度后重置为 0。
+        # 要求：开始界面和游戏中持续滚动，游戏结束后停止滚动。
+        # 更新时让 background_y 增加 BACKGROUND_SPEED，并用背景图片高度判断是否完成一次循环。
+        # if game_state != ?:
+        #     background_y += ?
+        #     if ? >= background_image.get_height():
+        #         ? = 0
 
         # 3. 处理退出事件
         for event in pygame.event.get():
@@ -137,7 +160,9 @@ def main():
             # 重置游戏数据并进入 STATUS_PLAYING。
             if event.type == pygame.KEYDOWN:
                 if game_state == STATUS_START or game_state == STATUS_GAME_OVER:
-                    play_music(GAME_MUSIC, GAME_MUSIC_VOLUME)
+                    # TODO 5.3：开始或重新开始游戏时，调用音乐播放函数，
+                    # 传入游戏音乐路径和音量，用游戏音乐替换开始界面音乐。
+                    # play_music(?, ?)
                     player, enemies, bullets, explosions, score = reset_game()
                     game_state = STATUS_PLAYING
             if game_state == STATUS_PLAYING and event.type == ADD_ENEMY_EVENT:
@@ -155,7 +180,6 @@ def main():
             clock.tick(FPS)
             continue  # 使用 continue 跳过后续战斗逻辑。
 
-        # TODO 4.3：处理并绘制结束时的画面（即游戏状态为结束），显示游戏结束、最终得分和重新开始提示；
         # 刷新画面、限制帧率，并使用 continue 跳过战斗逻辑。
         if game_state == STATUS_GAME_OVER:
             draw_game_screen(player, enemies, bullets, explosions, score)
@@ -190,12 +214,15 @@ def main():
                     hit_bullets.append(bullet)
                     hit_enemies.append(enemy)
                     score += 10
-                    enemy_explosion_sound.play()
-                    explosions.append({
-                        "center": enemy.rect.center,
-                        "frame": 0,
-                        "timer": 0,
-                    })
+                    # TODO 5.3：敌机被击毁时播放一次爆炸音效。
+                    # TODO 5.4：在敌机中心创建爆炸动画，记录固定中心位置、当前帧 0 和计时器 0。
+                    # 将新动画加入 explosions 列表，使多个敌机同时被击毁时能够分别播放动画。
+                    # 动画只负责显示，不能再次增加分数或参与碰撞检测。
+                    # explosions.append({
+                    #     "center": enemy.rect.center,
+                    #     "frame": 0,
+                    #     "timer": 0,
+                    # })
                     break
         bullets = [bullet for bullet in bullets if bullet not in hit_bullets]
         enemies = [enemy for enemy in enemies if enemy not in hit_enemies]
@@ -204,9 +231,15 @@ def main():
         # 6. 检查玩家是否撞到敌人
         for enemy in enemies:
             if is_mask_collision(player, enemy):
-                player_explosion_sound.play()
-                pygame.mixer.music.stop()
-                explosions = []
+                # TODO 5.3：玩家坠毁时播放一次坠毁音效并停止背景音乐。
+                # ?
+                # pygame.mixer.music.stop()
+
+                # TODO 5.4：进入游戏结束状态前清空尚未播放完的爆炸动画。
+                # 这些操作应放在状态改变的位置，避免每一帧重复触发。
+                # 
+
+                # 完成声音和动画状态处理后，再把 game_state 修改为 STATUS_GAME_OVER。
                 game_state = STATUS_GAME_OVER
                 break
 

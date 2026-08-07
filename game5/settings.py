@@ -23,17 +23,20 @@ ADD_ENEMY_INTERVAL = 1200
 ADD_ENEMY_EVENT = pygame.USEREVENT + 1
 SHOOT_EVENT = pygame.USEREVENT + 2
 
-START_MUSIC = "assets/audio/space_adventure_clip.ogg"
-GAME_MUSIC = "assets/audio/through_space_clip.ogg"
-ENEMY_EXPLOSION_SOUND = "assets/audio/boom-and-rattle.wav"
-PLAYER_EXPLOSION_SOUND = "assets/audio/explosion.wav"
-START_MUSIC_VOLUME = 0.14
-GAME_MUSIC_VOLUME = 0.25
-ENEMY_EXPLOSION_VOLUME = 0.25
-PLAYER_EXPLOSION_VOLUME = 0.20
+# TODO 5.3：配置开始界面音乐、游戏音乐、两种碰撞音效及其音量。音乐文件用于循环播放，音效文件用于单次播放；
+# START_MUSIC = "assets/audio/space_adventure_clip.ogg"
+# GAME_MUSIC = 
+# ENEMY_EXPLOSION_SOUND = 
+# PLAYER_EXPLOSION_SOUND = 
+# START_MUSIC_VOLUME = 0.15
+# GAME_MUSIC_VOLUME =
+# ENEMY_EXPLOSION_VOLUME =
+# PLAYER_EXPLOSION_VOLUME =
 
-EXPLOSION_IMAGES = [f"assets/explosion{i}.png" for i in range(1, 6)]
-EXPLOSION_FRAME_INTERVAL = 4
+# TODO 5.4：按播放顺序配置 5 张爆炸图片，并设置每张图片持续显示的游戏帧数。
+# 图片应按照 explosion1.png～explosion5.png 排列；切帧间隔越大，动画播放得越慢。
+# EXPLOSION_IMAGES = []
+# EXPLOSION_FRAME_INTERVAL = 
 
 # 定义开始、游戏中和游戏结束三种状态常量，状态值依次为 0、1、2。
 STATUS_START = 0
@@ -41,8 +44,12 @@ STATUS_PLAYING = 1
 STATUS_GAME_OVER = 2
 
 BACKGROUND_COLOR = (20, 28, 44)
-BACKGROUND_IMAGE = "assets/bg1.png"
-BACKGROUND_SPEED = 1
+# TODO 5.1：配置游戏背景图片路径。
+# BACKGROUND_IMAGE = "assets/bg1.png"
+
+# TODO 5.2：配置背景每个游戏帧向下移动的速度。
+# BACKGROUND_SPEED = 1
+
 WHITE = (255, 255, 255)
 LIGHT_GRAY = (220, 220, 220)
 YELLOW = (255, 220, 120)
