@@ -8,6 +8,8 @@ from settings import (
     BACKGROUND_IMAGE,
     BACKGROUND_SPEED,
     CURRENT_LANGUAGE,
+    EXPLOSION_FRAME_INTERVAL,
+    EXPLOSION_IMAGES,
     ENEMY_EXPLOSION_SOUND,
     ENEMY_EXPLOSION_VOLUME,
     FPS,
@@ -33,6 +35,7 @@ from settings import (
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 background_image = pygame.image.load(BACKGROUND_IMAGE).convert()
+explosion_images = [pygame.image.load(path).convert_alpha() for path in EXPLOSION_IMAGES]
 background_y = 0
 clock = pygame.time.Clock()
 title_font = pygame.font.SysFont("Microsoft YaHei", 56)
@@ -68,7 +71,7 @@ def draw_text_topright(text, font, color):
     screen.blit(text_image, text_rect)
 
 
-def draw_game_screen(player, enemies, bullets, score):
+def draw_game_screen(player, enemies, bullets, explosions, score):
     """绘制游戏画面"""
     height = background_image.get_height()
     screen.blit(background_image, (0, background_y))
@@ -78,6 +81,9 @@ def draw_game_screen(player, enemies, bullets, score):
     for bullet in bullets:
         bullet.draw(screen)
     player.draw(screen)
+    for explosion in explosions:
+        image = explosion_images[explosion["frame"]]
+        screen.blit(image, image.get_rect(center=explosion["center"]))
     score_text = get_text(CURRENT_LANGUAGE, "score", score=score)
     draw_text_topright(
         score_text,
@@ -88,7 +94,17 @@ def draw_game_screen(player, enemies, bullets, score):
 
 def reset_game():
     """重新开始一局游戏"""
-    return Player(), [], [], 0
+    return Player(), [], [], [], 0
+
+
+def update_explosions(explosions):
+    """更新爆炸动画并移除已经播放完的动画"""
+    for explosion in explosions:
+        explosion["timer"] += 1
+        if explosion["timer"] >= EXPLOSION_FRAME_INTERVAL:
+            explosion["timer"] = 0
+            explosion["frame"] += 1
+    return [item for item in explosions if item["frame"] < len(explosion_images)]
 
 
 def is_mask_collision(sprite1, sprite2):
@@ -101,7 +117,7 @@ def is_mask_collision(sprite1, sprite2):
 def main():
     global background_y
     # 调用 reset_game() 创建首局数据，并将初始状态设为 STATUS_START。
-    player, enemies, bullets, score = reset_game()
+    player, enemies, bullets, explosions, score = reset_game()
     game_state = STATUS_START
     play_music(START_MUSIC, START_MUSIC_VOLUME)
 
@@ -122,7 +138,7 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if game_state == STATUS_START or game_state == STATUS_GAME_OVER:
                     play_music(GAME_MUSIC, GAME_MUSIC_VOLUME)
-                    player, enemies, bullets, score = reset_game()
+                    player, enemies, bullets, explosions, score = reset_game()
                     game_state = STATUS_PLAYING
             if game_state == STATUS_PLAYING and event.type == ADD_ENEMY_EVENT:
                 enemies.append(Enemy())
@@ -130,7 +146,7 @@ def main():
                 bullets.append(player.shoot())
 
         if game_state == STATUS_START:
-            draw_game_screen(player, enemies, bullets, score)
+            draw_game_screen(player, enemies, bullets, explosions, score)
             title_text = get_text(CURRENT_LANGUAGE, "title")
             prompt_text = get_text(CURRENT_LANGUAGE, "start_prompt")
             draw_text(title_text, title_font, WHITE, (SCREEN_WIDTH / 2, 300))
@@ -142,7 +158,7 @@ def main():
         # TODO 4.3：处理并绘制结束时的画面（即游戏状态为结束），显示游戏结束、最终得分和重新开始提示；
         # 刷新画面、限制帧率，并使用 continue 跳过战斗逻辑。
         if game_state == STATUS_GAME_OVER:
-            draw_game_screen(player, enemies, bullets, score)
+            draw_game_screen(player, enemies, bullets, explosions, score)
             game_over_text = get_text(CURRENT_LANGUAGE, "game_over")
             final_score_text = get_text(CURRENT_LANGUAGE, "final_score", score=score)
             restart_text = get_text(CURRENT_LANGUAGE, "restart_prompt")
@@ -175,20 +191,27 @@ def main():
                     hit_enemies.append(enemy)
                     score += 10
                     enemy_explosion_sound.play()
+                    explosions.append({
+                        "center": enemy.rect.center,
+                        "frame": 0,
+                        "timer": 0,
+                    })
                     break
         bullets = [bullet for bullet in bullets if bullet not in hit_bullets]
         enemies = [enemy for enemy in enemies if enemy not in hit_enemies]
+        explosions = update_explosions(explosions)
 
         # 6. 检查玩家是否撞到敌人
         for enemy in enemies:
             if is_mask_collision(player, enemy):
                 player_explosion_sound.play()
                 pygame.mixer.music.stop()
+                explosions = []
                 game_state = STATUS_GAME_OVER
                 break
 
         # 7. 绘制画面
-        draw_game_screen(player, enemies, bullets, score)
+        draw_game_screen(player, enemies, bullets, explosions, score)
         pygame.display.update()
         clock.tick(FPS)
 

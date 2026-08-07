@@ -32,6 +32,9 @@ GAME_MUSIC_VOLUME = 0.25
 ENEMY_EXPLOSION_VOLUME = 0.25
 PLAYER_EXPLOSION_VOLUME = 0.20
 
+EXPLOSION_IMAGES = [f"assets/explosion{i}.png" for i in range(1, 6)]
+EXPLOSION_FRAME_INTERVAL = 4
+
 # 定义开始、游戏中和游戏结束三种状态常量，状态值依次为 0、1、2。
 STATUS_START = 0
 STATUS_PLAYING = 1
