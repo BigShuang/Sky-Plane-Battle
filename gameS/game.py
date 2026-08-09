@@ -53,18 +53,18 @@ def draw_game_screen(player, enemies, bullets, score):
         bullet.draw(screen)
     player.draw(screen)
     # TODO 4.3：在 PLAYING 界面的右上角绘制当前分数。
-    # score_text = get_text(CURRENT_LANGUAGE, "score", score=score)
-    # draw_text_topright(
-    #     score_text,
-    #     normal_font,
-    #     WHITE
-    # )
+    score_text = get_text(CURRENT_LANGUAGE, "score", score=score)
+    draw_text_topright(
+        score_text,
+        normal_font,
+        WHITE
+    )
 
 
 def reset_game():
     """重新开始一局游戏"""
     # TODO 4.1：返回新玩家、空敌机列表、空子弹列表和 0 分。
-    pass
+    return Player(), [], [], 0
 
 
 def is_mask_collision(sprite1, sprite2):
@@ -93,11 +93,17 @@ def main():
             # 重置游戏数据并进入 STATUS_PLAYING。
             # if event.type == pygame.KEYDOWN:
             #     if game_state == STATUS_START or game_state == STATUS_GAME_OVER:
-            #         
+            if event.type == pygame.KEYDOWN:
+                if game_state == STATUS_START or game_state == STATUS_GAME_OVER:
+                    player, enemies, bullets, score = reset_game()
+                    game_state = STATUS_PLAYING
 
             # TODO 4.1：仅在 STATUS_PLAYING 状态响应敌机生成和射击事件。
             # if game_state == STATUS_PLAYING and event.type == ADD_ENEMY_EVENT:
-            pass
+            if game_state == STATUS_PLAYING and event.type == ADD_ENEMY_EVENT:
+                enemies.append(Enemy())
+            if game_state == STATUS_PLAYING and event.type == SHOOT_EVENT:
+                bullets.append(player.shoot())
 
         # TODO 4.3：绘制 START 界面的标题和开始提示，刷新画面并限制帧率；
         # if game_state == ?:
@@ -111,10 +117,29 @@ def main():
         #     pygame.display.update()
         #     clock.tick(FPS)
         #     continue  # 使用 continue 跳过后续战斗逻辑。
+        if game_state == STATUS_START:
+            draw_game_screen(player, enemies, bullets, score)
+            title_text = get_text(CURRENT_LANGUAGE, "title")
+            prompt_text = get_text(CURRENT_LANGUAGE, "start_prompt")
+            draw_text(title_text, title_font, WHITE, (SCREEN_WIDTH / 2, 300))
+            draw_text(prompt_text, normal_font, LIGHT_GRAY, (SCREEN_WIDTH / 2, 390))
+            pygame.display.update()
+            clock.tick(FPS)
+            continue
 
         # TODO 4.3：处理并绘制结束时的画面（即游戏状态为结束），显示游戏结束、最终得分和重新开始提示；
         # 刷新画面、限制帧率，并使用 continue 跳过战斗逻辑。
-        
+        if game_state == STATUS_GAME_OVER:
+            draw_game_screen(player, enemies, bullets, score)
+            game_over_text = get_text(CURRENT_LANGUAGE, "game_over")
+            final_score_text = get_text(CURRENT_LANGUAGE, "final_score", score=score)
+            restart_text = get_text(CURRENT_LANGUAGE, "restart_prompt")
+            draw_text(game_over_text, title_font, WHITE, (SCREEN_WIDTH / 2, 300))
+            draw_text(final_score_text, normal_font, YELLOW, (SCREEN_WIDTH / 2, 370))
+            draw_text(restart_text, normal_font, LIGHT_GRAY, (SCREEN_WIDTH / 2, 430))
+            pygame.display.update()
+            clock.tick(FPS)
+            continue
 
         # 4. 获取键盘按键，并更新飞机
         keys = pygame.key.get_pressed()
@@ -132,9 +157,10 @@ def main():
         hit_bullets = []
         for bullet in bullets:
             for enemy in enemies:
-                if bullet.rect.colliderect(enemy.rect):
+                if enemy not in hit_enemies and bullet.rect.colliderect(enemy.rect):
                     hit_bullets.append(bullet)
                     hit_enemies.append(enemy)
+                    score += 10
                     break
         bullets = [bullet for bullet in bullets if bullet not in hit_bullets]
         enemies = [enemy for enemy in enemies if enemy not in hit_enemies]
@@ -142,6 +168,10 @@ def main():
         # 6. 检查玩家是否撞到敌人
         # TODO 4.2：遍历敌机并对敌机与玩家飞机进行像素级碰撞检测， 要使用is_mask_collision
         # 玩家与敌机碰撞后立即进入 STATUS_GAME_OVER。
+        for enemy in enemies:
+            if is_mask_collision(player, enemy):
+                game_state = STATUS_GAME_OVER
+                break
 
         # 7. 绘制画面
         draw_game_screen(player, enemies, bullets, score)
