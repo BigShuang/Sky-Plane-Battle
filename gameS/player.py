@@ -1,22 +1,30 @@
 import pygame
 
 from bullet import Bullet
-from settings import PLAYER_IMAGE, PLAYER_OFFSET, PLAYER_SPEED, SCREEN_HEIGHT, SCREEN_WIDTH
+from settings import PLAYER_IMAGE, PLAYER_SPEED, SCREEN_HEIGHT, SCREEN_WIDTH, PLAYER_OFFSET
+
 
 class Player:
     """玩家飞机"""
 
     def __init__(self):
-        self.image = pygame.image.load(PLAYER_IMAGE).convert_alpha()
+        # 加载飞机图片
+        self.image = pygame.image.load(str(PLAYER_IMAGE)).convert_alpha()
         self.rect = self.image.get_rect()
+        # TODO 4.2：根据带透明通道的玩家图片创建像素碰撞遮罩 mask。
+        # self.mask = pygame.mask.from_surface(self.image)
 
+        # 飞机初始位置：屏幕底部中间
         self.x = (SCREEN_WIDTH - self.rect.width) / 2
         self.y = SCREEN_HEIGHT - self.rect.height
         self.rect.x = round(self.x)
         self.rect.y = round(self.y)
+
+        # 飞机速度，数值越大移动越快
         self.speed = PLAYER_SPEED
 
     def move(self, keys):
+        """根据键盘按键移动飞机"""
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.x -= self.speed
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
@@ -38,15 +46,16 @@ class Player:
             self.y = SCREEN_HEIGHT - self.rect.height
 
     def update(self, keys):
+        """更新飞机状态"""
         self.move(keys)
         self.stay_in_screen()
         self.rect.x = round(self.x)
         self.rect.y = round(self.y)
 
     def draw(self, screen):
+        """绘制飞机"""
         screen.blit(self.image, self.rect)
 
     def shoot(self):
         """从飞机顶部中间发射子弹"""
-        # TODO 3.1：根据玩家飞机的顶部中点创建并返回一个 Bullet 对象。
         return Bullet(self.rect.centerx, self.rect.top)

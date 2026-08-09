@@ -50,7 +50,7 @@ TEXTS = {
         "restart_prompt": "按任意键重新开始游戏",
     },
     EN: {
-        "caption": "Sky Plane Battle Basic 4",
+        "caption": "Sky Plane Battle v1.4",
         "title": "Sky Plane Battle",
         "start_prompt": "Press any key to start",
         "game_over": "Game Over",

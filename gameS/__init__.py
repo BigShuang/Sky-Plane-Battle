@@ -1,1 +1,1 @@
-"""Sky Plane Battle v1.3."""
+"""Sky Plane Battle v1.4."""
