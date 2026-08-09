@@ -11,7 +11,6 @@ class Player:
         # 加载飞机图片
         self.image = pygame.image.load(str(PLAYER_IMAGE)).convert_alpha()
         self.rect = self.image.get_rect()
-        # TODO 4.2：根据带透明通道的玩家图片创建像素碰撞遮罩 mask。
         self.mask = pygame.mask.from_surface(self.image)
 
         # 飞机初始位置：屏幕底部中间
