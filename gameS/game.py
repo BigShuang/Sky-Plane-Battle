@@ -10,7 +10,7 @@ def main():
     pygame.display.set_caption("Sky Plane Battle v1.1")
     clock = pygame.time.Clock()
 
-    # TODO 1.3：创建玩家对象。
+    player = Player()
     running = True
 
     while running:
@@ -18,12 +18,11 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
 
-        # TODO 1.3：获取当前按键状态，并用它更新玩家。
-        # keys = pygame.key.get_pressed()
+        keys = pygame.key.get_pressed()
+        player.update(keys)
 
         screen.fill(BACKGROUND_COLOR)
-        # TODO 1.3：将玩家绘制到游戏窗口中。
-
+        player.draw(screen)
 
         pygame.display.update()
         clock.tick(FPS)

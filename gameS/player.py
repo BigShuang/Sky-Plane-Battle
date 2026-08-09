@@ -21,25 +21,25 @@ class Player:
 
     def move(self, keys):
         """根据方向键或 W/A/S/D 移动飞机"""
-        # TODO 1.1：读取方向键和 W/A/S/D 的状态，使用 self.speed
-        # 分别修改 self.x、self.y，并允许同时按两个方向键进行斜向移动。
-        # if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-        #     self.x -= self.speed
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+            self.x -= self.speed
+        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+            self.x += self.speed
+        if keys[pygame.K_UP] or keys[pygame.K_w]:
+            self.y -= self.speed
+        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
+            self.y += self.speed
 
     def stay_in_screen(self):
         """限制飞机不能飞出屏幕"""
-        # TODO 1.2：限制玩家飞机的上下左右边界，要使用界面的长度和宽度来计算
-        # 计算右边界和下边界时， 需要分别考虑飞机矩形对象的宽度和高度。
-        # 飞机矩形对象： self.rect, 具有width和height属性
-        # if self.x < ?: 
-        # if self.y < ?:
-        
-        # 飞机中间射出炮弹，左右两侧可以适当超出屏幕一定范围，对应 PLAYER_OFFSET
+        self.x = max(-PLAYER_OFFSET, min(self.x, SCREEN_WIDTH - self.rect.width + PLAYER_OFFSET))
+        self.y = max(0, min(self.y, SCREEN_HEIGHT - self.rect.height))
 
     def update(self, keys):
         """接收按键信息，更新玩家飞机：
         依次完成移动、边界限制和位置同步"""
-        # TODO 1.2：按照“移动 -> 边界限制 -> ”的顺序更新玩家。
+        self.move(keys)
+        self.stay_in_screen()
 
         # 同步 rect 位置, 更新飞机位置
         self.rect.x = self.x
