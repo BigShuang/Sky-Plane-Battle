@@ -14,7 +14,6 @@ class Player:
         self.y = SCREEN_HEIGHT - self.rect.height
         self.rect.x = round(self.x)
         self.rect.y = round(self.y)
-
         self.speed = PLAYER_SPEED
 
     def move(self, keys):
@@ -40,11 +39,12 @@ class Player:
             self.y = SCREEN_HEIGHT - self.rect.height
 
     def update(self, keys):
+        """更新玩家飞机的位置"""
         self.move(keys)
         self.stay_in_screen()
         self.rect.x = round(self.x)
         self.rect.y = round(self.y)
 
     def draw(self, screen):
+        """绘制玩家飞机"""
         screen.blit(self.image, self.rect)
-
