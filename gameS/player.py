@@ -1,7 +1,7 @@
 import pygame
 
+from bullet import Bullet
 from settings import PLAYER_IMAGE, PLAYER_OFFSET, PLAYER_SPEED, SCREEN_HEIGHT, SCREEN_WIDTH
-
 
 class Player:
     """玩家飞机"""
@@ -17,7 +17,6 @@ class Player:
         self.speed = PLAYER_SPEED
 
     def move(self, keys):
-        """根据方向键或 W/A/S/D 移动飞机"""
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
             self.x -= self.speed
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
@@ -39,12 +38,15 @@ class Player:
             self.y = SCREEN_HEIGHT - self.rect.height
 
     def update(self, keys):
-        """更新玩家飞机的位置"""
         self.move(keys)
         self.stay_in_screen()
         self.rect.x = round(self.x)
         self.rect.y = round(self.y)
 
     def draw(self, screen):
-        """绘制玩家飞机"""
         screen.blit(self.image, self.rect)
+
+    def shoot(self):
+        """从飞机顶部中间发射子弹"""
+        # TODO 3.1：根据玩家飞机的顶部中点创建并返回一个 Bullet 对象。
+        pass
